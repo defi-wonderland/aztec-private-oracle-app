@@ -9,9 +9,10 @@ import styles from './TokenMinter.module.scss';
 interface Props {
     token: AztecAddress;
     minter: CompleteAddress;
+    onResult: (result: string) => void;
 }
 
-export function TokenMinter({ token, minter }: Props) {
+export function TokenMinter({ token, minter, onResult }: Props) {
     const [amount, setAmount] = useState('1000');
     const [to, setTo] = useState(minter.address.toString() as string);
     const [isLoading, setIsLoading] = useState(false);
@@ -25,27 +26,31 @@ export function TokenMinter({ token, minter }: Props) {
 
     const mintTokens = async () => {
         setIsLoading(true);
+        try {
+            const secret = Fr.random();
+            const secretHash = await computeMessageSecretHash(secret);
 
-        const secret = Fr.random();
-        const secretHash = await computeMessageSecretHash(secret);
+            // mintPrivate
+            const mintPrivate = 'mint_private';
+            const mintPrivateAbi = tokenArtifact.functions.find(f => f.name === mintPrivate)!;
+            const typedMintPrivateArgs: any[] = convertArgs(mintPrivateAbi, { amount: amount, secret_hash: secretHash });
+            const receipt = await callContractFunction(token, tokenArtifact, mintPrivate, typedMintPrivateArgs, pxe, minter)
 
-        // mintPrivate
-        const mintPrivate = 'mint_private';
-        const mintPrivateAbi = tokenArtifact.functions.find(f => f.name === mintPrivate)!;
-        const typedMintPrivateArgs: any[] = convertArgs(mintPrivateAbi, { amount: amount, secret_hash: secretHash });
-        const receipt = await callContractFunction(token, tokenArtifact, mintPrivate, typedMintPrivateArgs, pxe, minter)
+            // add to PXE
+            await addPendingShieldNoteToPXE(minter, BigInt(amount), secretHash, receipt.txHash);
 
-        // add to PXE
-        await addPendingShieldNoteToPXE(minter, BigInt(amount), secretHash, receipt.txHash);
-
-        // redeemShield
-        const redeemShield = 'redeem_shield';
-        const redeemShieldAbi = tokenArtifact.functions.find(f => f.name === redeemShield)!;
-        const receiver = CompleteAddress.fromString(to);
-        const typedRedeemShieldArgs: any[] = convertArgs(redeemShieldAbi, { to: receiver, amount: BigInt(amount), secret: secret });
-        await callContractFunction(token, tokenArtifact, redeemShield, typedRedeemShieldArgs, pxe, minter)
-
-        setIsLoading(false);
+            // redeemShield
+            const redeemShield = 'redeem_shield';
+            const redeemShieldAbi = tokenArtifact.functions.find(f => f.name === redeemShield)!;
+            const receiver = CompleteAddress.fromString(to);
+            const typedRedeemShieldArgs: any[] = convertArgs(redeemShieldAbi, { to: receiver, amount: BigInt(amount), secret: secret });
+            await callContractFunction(token, tokenArtifact, redeemShield, typedRedeemShieldArgs, pxe, minter)
+            onResult(`Succesfully minted ${amount} tokens to ${to}`)
+        } catch (e: any) {
+            onResult(`Error minting tokens: ${e.message}`)
+        } finally {
+            setIsLoading(false);
+        }
     }
 
     const header = 'Mint tokens';

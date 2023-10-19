@@ -1,4 +1,5 @@
 import { FILTERED_FUNCTION_NAMES, contractArtifact, tokenArtifact } from '../config.js';
+import { ApproveTransfer } from './components/ApproveTransfer.js';
 import { MessageHasher } from './components/MessageHasher.js';
 import { TokenMinter } from './components/TokenMinter.js';
 import { Copy } from './components/copy.js';
@@ -242,7 +243,8 @@ export function Contract({ wallet }: Props) {
         {contractAddress && <Card className={styles.card} cardTheme={CardTheme.DARK} cardHeader={questionsHeader} cardContent={questionsContent} />}
         {contractAddress && <Card className={styles.card} cardTheme={CardTheme.DARK} cardHeader={answersHeader} cardContent={answersContent} />}
         {/* <MessageHasher /> */}
-        {tokenContractAddress && <TokenMinter token={tokenContractAddress} minter={wallet} />}
+        {tokenContractAddress && <TokenMinter token={tokenContractAddress} minter={wallet} onResult={handleResult} />}
+        {tokenContractAddress && <ApproveTransfer tokenAddress={tokenContractAddress} user={wallet} onResult={handleResult} />}
         <div className={styles.tos} onClick={() => setTermsOpen(true)}>
           Terms of Service
         </div>
