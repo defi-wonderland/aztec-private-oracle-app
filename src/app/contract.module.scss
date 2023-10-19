@@ -17,6 +17,8 @@
   display: flex;
   flex-direction: row;
   gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .tag {
@@ -71,3 +73,4 @@
   max-width: 1280px;
   margin-bottom: 20px;
 }
+

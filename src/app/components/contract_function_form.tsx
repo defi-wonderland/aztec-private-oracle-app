@@ -86,13 +86,9 @@ function generateYupSchema(functionAbi: FunctionArtifact, defaultAddress: string
         const { yupType, defaultValue } = generateYupDefaultValue(structParam, defaultAddress);
         structParamSchema[structParam.name] = yupType;
         structInitialValues[structParam.name] = defaultValue;
-        console.log(structParam.name);
       }
-      console.log(param.name);
       parameterSchema[param.name] = Yup.object().shape(structParamSchema);
       initialValues[param.name] = structInitialValues;
-      console.log(parameterSchema);
-      console.log(initialValues);
       continue;
     }
   }

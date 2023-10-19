@@ -1,4 +1,5 @@
 import { FILTERED_FUNCTION_NAMES, contractArtifact, tokenArtifact } from '../config.js';
+import { MessageHasher } from './components/MessageHasher.js';
 import { Copy } from './components/copy.js';
 import { ContractFunctionForm, Popup, ReadContractStorage } from './components/index.js';
 import styles from './contract.module.scss';
@@ -238,6 +239,7 @@ export function Contract({ wallet }: Props) {
         <Card className={styles.card} cardTheme={CardTheme.DARK} cardHeader={tokenHeader} cardContent={tokenContent} />
         {contractAddress && <Card className={styles.card} cardTheme={CardTheme.DARK} cardHeader={questionsHeader} cardContent={questionsContent} />}
         {contractAddress && <Card className={styles.card} cardTheme={CardTheme.DARK} cardHeader={answersHeader} cardContent={answersContent} />}
+        <MessageHasher />
         <div className={styles.tos} onClick={() => setTermsOpen(true)}>
           Terms of Service
         </div>
