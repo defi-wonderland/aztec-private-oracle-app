@@ -1,5 +1,6 @@
 import { FILTERED_FUNCTION_NAMES, contractArtifact, tokenArtifact } from '../config.js';
 import { MessageHasher } from './components/MessageHasher.js';
+import { TokenMinter } from './components/TokenMinter.js';
 import { Copy } from './components/copy.js';
 import { ContractFunctionForm, Popup, ReadContractStorage } from './components/index.js';
 import styles from './contract.module.scss';
@@ -86,6 +87,7 @@ export function Contract({ wallet }: Props) {
               <div className={styles.functions}>
                 {functions.map((functionAbi: FunctionArtifact, index: number) => (
                   <ImageButton
+                    key={functionAbi.name}
                     icon={ImageButtonIcon.Wallet}
                     label={functionAbi.name}
                     onClick={() => {
@@ -239,7 +241,8 @@ export function Contract({ wallet }: Props) {
         <Card className={styles.card} cardTheme={CardTheme.DARK} cardHeader={tokenHeader} cardContent={tokenContent} />
         {contractAddress && <Card className={styles.card} cardTheme={CardTheme.DARK} cardHeader={questionsHeader} cardContent={questionsContent} />}
         {contractAddress && <Card className={styles.card} cardTheme={CardTheme.DARK} cardHeader={answersHeader} cardContent={answersContent} />}
-        <MessageHasher />
+        {/* <MessageHasher /> */}
+        {tokenContractAddress && <TokenMinter token={tokenContractAddress} minter={wallet} />}
         <div className={styles.tos} onClick={() => setTermsOpen(true)}>
           Terms of Service
         </div>
