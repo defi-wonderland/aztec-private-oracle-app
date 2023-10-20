@@ -53,9 +53,7 @@ export function TokenMinter({ token, minter, onResult }: Props) {
         }
     }
 
-    const header = 'Mint tokens';
-
-    const content = (
+    return (
         <div className={styles.container}>
             <div className={styles.item}>
                 <div className={styles.label}>amount</div>
@@ -79,9 +77,5 @@ export function TokenMinter({ token, minter, onResult }: Props) {
                 {isLoading ? <Loader /> : <Button onClick={mintTokens} className={styles.actionButton} text={'Mint'} />}
             </div>
         </div>
-    )
-
-    return (
-        <Card className={styles.card} cardTheme={CardTheme.DARK} cardHeader={header} cardContent={content} />
     )
 }

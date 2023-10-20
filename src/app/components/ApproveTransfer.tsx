@@ -42,7 +42,7 @@ export function ApproveTransfer({ tokenAddress, user, onResult }: Props) {
 
                 const witness = await selectedWallet.createAuthWitness(messageHash);
                 await selectedWallet.addAuthWitness(witness);
-                onResult(`Succesfully approved transfer of ${amount} tokens to ${to} with nonce ${nonce}`);
+                onResult(`Approved transfer with nonce ${nonce}`);
             } catch (e: any) {
                 onResult(`Error approving transfer: ${e.message}`);
             } finally {
@@ -51,9 +51,8 @@ export function ApproveTransfer({ tokenAddress, user, onResult }: Props) {
         }
     }
 
-    const header = 'Approve tokens';
 
-    const content = (
+    return (
         <div className={styles.container}>
             <div className={styles.item}>
                 <div className={styles.label}>amount</div>
@@ -77,9 +76,5 @@ export function ApproveTransfer({ tokenAddress, user, onResult }: Props) {
                 {isLoading || !((token && selectedWallet)) ? <Loader /> : <Button onClick={approveTransfer} className={styles.actionButton} text={'Approve'} />}
             </div>
         </div>
-    )
-
-    return (
-        <Card className={styles.card} cardTheme={CardTheme.DARK} cardHeader={header} cardContent={content} />
     )
 }

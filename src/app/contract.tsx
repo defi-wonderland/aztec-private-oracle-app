@@ -1,14 +1,12 @@
-import { FILTERED_FUNCTION_NAMES, contractArtifact, tokenArtifact } from '../config.js';
-import { ApproveTransfer } from './components/ApproveTransfer.js';
-import { MessageHasher } from './components/MessageHasher.js';
-import { TokenMinter } from './components/TokenMinter.js';
-import { Copy } from './components/copy.js';
-import { ContractFunctionForm, Popup, ReadContractStorage } from './components/index.js';
-import styles from './contract.module.scss';
 import { Button, ButtonSize, ButtonTheme, Card, CardTheme, ImageButton, ImageButtonIcon } from '@aztec/aztec-ui';
 import { AztecAddress, CompleteAddress, Fr, NotePreimage } from '@aztec/aztec.js';
 import { ContractArtifact, FunctionArtifact } from '@aztec/foundation/abi';
 import { ReactNode, useState } from 'react';
+import { FILTERED_FUNCTION_NAMES, contractArtifact, tokenArtifact } from '../config.js';
+import { TokenUtils } from './components/TokenUtils.js';
+import { Copy } from './components/copy.js';
+import { ContractFunctionForm, Popup, ReadContractStorage } from './components/index.js';
+import styles from './contract.module.scss';
 
 const functionTypeSortOrder = {
   secret: 0,
@@ -239,12 +237,11 @@ export function Contract({ wallet }: Props) {
     <div className={styles.contractContentContainer}>
       <div className={styles.contractContent}>
         <Card className={styles.card} cardTheme={CardTheme.DARK} cardHeader={oracleHeader} cardContent={oracleContent} />
-        <Card className={styles.card} cardTheme={CardTheme.DARK} cardHeader={tokenHeader} cardContent={tokenContent} />
+        {!tokenContractAddress && <Card className={styles.card} cardTheme={CardTheme.DARK} cardHeader={tokenHeader} cardContent={tokenContent} />}
         {contractAddress && <Card className={styles.card} cardTheme={CardTheme.DARK} cardHeader={questionsHeader} cardContent={questionsContent} />}
         {contractAddress && <Card className={styles.card} cardTheme={CardTheme.DARK} cardHeader={answersHeader} cardContent={answersContent} />}
         {/* <MessageHasher /> */}
-        {tokenContractAddress && <TokenMinter token={tokenContractAddress} minter={wallet} onResult={handleResult} />}
-        {tokenContractAddress && <ApproveTransfer tokenAddress={tokenContractAddress} user={wallet} onResult={handleResult} />}
+        {tokenContractAddress && <TokenUtils tokenAddress={tokenContractAddress} user={wallet} onResult={handleResult} />}
         <div className={styles.tos} onClick={() => setTermsOpen(true)}>
           Terms of Service
         </div>
