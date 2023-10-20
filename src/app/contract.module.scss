@@ -17,6 +17,8 @@
   display: flex;
   flex-direction: row;
   gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .tag {
@@ -62,12 +64,12 @@
 .contractContent {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   padding-bottom: 5px;
 }
 
 .card {
-  max-width: 1280px;
+  max-width: 1100px;
   margin-bottom: 20px;
 }
+

@@ -1,11 +1,13 @@
-import { FILTERED_FUNCTION_NAMES, contractArtifact, tokenArtifact } from '../config.js';
-import { Copy } from './components/copy.js';
-import { ContractFunctionForm, Popup, ReadContractStorage } from './components/index.js';
-import styles from './contract.module.scss';
 import { Button, ButtonSize, ButtonTheme, Card, CardTheme, ImageButton, ImageButtonIcon } from '@aztec/aztec-ui';
 import { AztecAddress, CompleteAddress, Fr, NotePreimage } from '@aztec/aztec.js';
 import { ContractArtifact, FunctionArtifact } from '@aztec/foundation/abi';
 import { ReactNode, useState } from 'react';
+import { FILTERED_FUNCTION_NAMES, contractArtifact, tokenArtifact } from '../config.js';
+import { TokenUtils } from './components/TokenUtils.js';
+import { Copy } from './components/copy.js';
+import { ContractFunctionForm, Popup } from './components/index.js';
+import styles from './contract.module.scss';
+import { Questions } from './components/Questions.js';
 
 const functionTypeSortOrder = {
   secret: 0,
@@ -85,6 +87,7 @@ export function Contract({ wallet }: Props) {
               <div className={styles.functions}>
                 {functions.map((functionAbi: FunctionArtifact, index: number) => (
                   <ImageButton
+                    key={functionAbi.name}
                     icon={ImageButtonIcon.Wallet}
                     label={functionAbi.name}
                     onClick={() => {
@@ -148,96 +151,17 @@ export function Contract({ wallet }: Props) {
     };
   }
 
-  function renderQuestionsStorage(contractAddress?: AztecAddress): { content: ReactNode; header: string } {
-
-    const parseQuestion = (question: Fr[]) => {
-      return [
-        question[0].toBigInt().toString(), // Question
-        question[1].toShortString(), // Requester
-        question[2].toShortString(), // Divinity
-      ]
-    }
-
-    const parseResult = (result: NotePreimage[]) => (
-      result.map(question =>
-        parseQuestion(question.items)
-      )
-    )
-
-    if (contractAddress) {
-      return {
-        header: 'Questions',
-        content: (
-          <div className={styles.selectorWrapper}>
-            <ReadContractStorage
-              wallet={wallet}
-              contractAddress={contractAddress}
-              storageSlot={1}
-              header={['Request', 'Requester', 'Divinity']}
-              parseResult={parseResult}
-            />
-          </div>
-        )
-      }
-    } else {
-      return {
-        header: '',
-        content: <></>
-      }
-    }
-  }
-
-  function renderAnswersStorage(contractAddress?: AztecAddress): { content: ReactNode; header: string } {
-
-    const parseAnswer = (answer: Fr[]) => {
-      return [
-        answer[0].toBigInt().toString(), // Question
-        answer[1].toBigInt().toString(), // Answer
-        answer[2].toShortString(), // Requester
-      ]
-    }
-
-    const parseResult = (result: NotePreimage[]) => (
-      result.map(answer =>
-        parseAnswer(answer.items)
-      )
-    )
-
-    if (contractAddress) {
-      return {
-        header: 'Answers',
-        content: (
-          <div className={styles.selectorWrapper}>
-            <ReadContractStorage
-              wallet={wallet}
-              contractAddress={contractAddress}
-              storageSlot={2}
-              header={['Request', 'Answer', 'Requester']}
-              parseResult={parseResult}
-            />
-          </div>
-        )
-      }
-    } else {
-      return {
-        header: '',
-        content: <></>
-      }
-    }
-  }
-
   const { header: oracleHeader, content: oracleContent } = renderCardContent(contractArtifact, handleContractDeployed, contractAddress);
   const { header: tokenHeader, content: tokenContent } = renderCardContent(tokenArtifact, handleTokenContractDeployed, tokenContractAddress);
-  const { header: questionsHeader, content: questionsContent } = renderQuestionsStorage(contractAddress);
-  const { header: answersHeader, content: answersContent } = renderAnswersStorage(contractAddress);
 
   return (
     <div className={styles.contractContentContainer}>
       <div className={styles.contractContent}>
         <Card className={styles.card} cardTheme={CardTheme.DARK} cardHeader={oracleHeader} cardContent={oracleContent} />
-        <Card className={styles.card} cardTheme={CardTheme.DARK} cardHeader={tokenHeader} cardContent={tokenContent} />
-        {contractAddress && <Card className={styles.card} cardTheme={CardTheme.DARK} cardHeader={questionsHeader} cardContent={questionsContent} />}
-        {contractAddress && <Card className={styles.card} cardTheme={CardTheme.DARK} cardHeader={answersHeader} cardContent={answersContent} />}
+        {contractAddress && <Questions contractAddress={contractAddress} user={wallet} />}
+        {!tokenContractAddress && <Card className={styles.card} cardTheme={CardTheme.DARK} cardHeader={tokenHeader} cardContent={tokenContent} />}
+        {/* <MessageHasher /> */}
+        {tokenContractAddress && <TokenUtils tokenAddress={tokenContractAddress} user={wallet} onResult={handleResult} />}
         <div className={styles.tos} onClick={() => setTermsOpen(true)}>
           Terms of Service
         </div>
