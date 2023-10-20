@@ -89,8 +89,8 @@ export class PrivateOracleContract extends ContractBase {
     /** consult_answer(question: field) */
     consult_answer: ((question: FieldLike) => ContractFunctionInteraction) & Pick<ContractMethod, 'selector'>;
 
-    /** get_answer_unconstrained(question: field, requester: struct) */
-    get_answer_unconstrained: ((question: FieldLike, requester: AztecAddressLike) => ContractFunctionInteraction) & Pick<ContractMethod, 'selector'>;
+    /** get_answer_unconstrained(question: field, note_owner: struct) */
+    get_answer_unconstrained: ((question: FieldLike, note_owner: AztecAddressLike) => ContractFunctionInteraction) & Pick<ContractMethod, 'selector'>;
 
     /** submit_answer(question: field, requester: struct, answer: field) */
     submit_answer: ((question: FieldLike, requester: AztecAddressLike, answer: FieldLike) => ContractFunctionInteraction) & Pick<ContractMethod, 'selector'>;

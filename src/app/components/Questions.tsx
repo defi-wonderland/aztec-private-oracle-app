@@ -42,7 +42,9 @@ export function Questions({ contractAddress, user }: Props) {
                 {
                     request: answer.items[0].toBigInt().toString(), // Question
                     answer: answer.items[1].toBigInt().toString(), // Answer
-                    owner: answer.items[2].toString(), // Owner
+                    requester: answer.items[2].toString(), // Requester
+                    divinity: answer.items[3].toString(), // Divinity
+                    owner: answer.items[4].toString(), // Owner
                 }
             ))
         )
