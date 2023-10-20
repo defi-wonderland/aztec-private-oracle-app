@@ -229,20 +229,18 @@ interface ContractStorageFormProps {
   wallet: CompleteAddress;
   contractAddress?: AztecAddress;
   storageSlot: number;
-  header: string[];
-  parseResult: (result: NotePreimage[]) => string[][];
+  parseResult: (result: NotePreimage[]) => any[];
 }
 
-export function ReadContractStorage({
+export function useReadContractStorage({
   wallet,
   contractAddress,
   storageSlot,
-  header,
   parseResult
 }: ContractStorageFormProps) {
   const wait = 1000; // 1 second
 
-  const [data, setData] = useState<string[][]>([] as string[][]);
+  const [data, setData] = useState([{}]);
 
   const update = async () => {
     const STORAGE_SLOT: Fr = new Fr(storageSlot);
@@ -263,24 +261,5 @@ export function ReadContractStorage({
     }
   }, [wallet.address.toString()])
 
-  return (
-    <>
-      <table>
-        <thead>
-          <tr>
-            {header.map((h, index) => <th key={index}>{h}</th>)}
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((elem, index) =>
-          (
-            <tr key={index}>
-              {elem.map((e, index) => <td key={index}>{e}</td>)}
-            </tr>
-          )
-          )}
-        </tbody>
-      </table>
-    </>
-  );
+  return data;
 }
