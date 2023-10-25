@@ -56,3 +56,38 @@ export function toShortAddress(address: string): string {
   }
   return `${address.slice(0, 6)}...${address.slice(-4)}`;
 }
+
+export function stringToHex(str: string) {
+  var hex, i;
+
+  var result = "";
+  for (i = 0; i < str.length; i++) {
+    hex = str.charCodeAt(i).toString(16);
+    result += ("000" + hex).slice(-4);
+  }
+
+  return result
+}
+
+export function hexToString(hex: string) {
+  var j;
+  var hexes = hex.match(/.{1,4}/g) || [];
+  var back = "";
+  for (j = 0; j < hexes.length; j++) {
+    back += String.fromCharCode(parseInt(hexes[j], 16));
+  }
+
+  return back;
+}
+
+export function encodeToBigInt(str: string) {
+  return BigInt('0x' + Buffer.from(str).toString('hex'));
+}
+
+export function decodeFromBigInt(bigint: bigint) {
+  const hex = bigint.toString(16);
+  const hexString = hex.length % 2 === 0 ? hex : '0' + hex;
+  return Buffer.from(hexString, 'hex').toString();
+}
+
+

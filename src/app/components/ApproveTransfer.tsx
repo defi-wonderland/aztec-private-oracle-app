@@ -1,4 +1,4 @@
-import { Button, Card, CardTheme, Loader } from "@aztec/aztec-ui";
+import { Button, Loader } from "@aztec/aztec-ui";
 import { AccountWallet, AztecAddress, CompleteAddress, Fr, computeAuthWitMessageHash } from "@aztec/aztec.js";
 import { useEffect, useState } from "react";
 import { TokenContract } from "../../artifacts/Token.js";

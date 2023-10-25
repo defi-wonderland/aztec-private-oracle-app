@@ -16,7 +16,6 @@ import {
   EthAddressLike,
   FieldLike,
   Fr,
-  PXE,
   Point,
   PublicKey,
   Wallet,
@@ -28,7 +27,7 @@ export const TokenContractArtifact = TokenContractArtifactJson as ContractArtifa
  * Type-safe interface for contract Token;
  */
 export class TokenContract extends ContractBase {
-  
+
   private constructor(
     completeAddress: CompleteAddress,
     wallet: Wallet,
@@ -36,9 +35,9 @@ export class TokenContract extends ContractBase {
   ) {
     super(completeAddress, TokenContractArtifact, wallet, portalContract);
   }
-  
 
-  
+
+
   /**
    * Creates a contract instance.
    * @param address - The deployed contract's address.
@@ -52,34 +51,34 @@ export class TokenContract extends ContractBase {
     return Contract.at(address, TokenContract.artifact, wallet) as Promise<TokenContract>;
   }
 
-  
+
   /**
    * Creates a tx to deploy a new instance of this contract.
    */
-  public static deploy(pxe: PXE, admin: AztecAddressLike) {
-    return new DeployMethod<TokenContract>(Point.ZERO, pxe, TokenContractArtifact, Array.from(arguments).slice(1));
+  public static deploy(wallet: Wallet, admin: AztecAddressLike) {
+    return new DeployMethod<TokenContract>(Point.ZERO, wallet, TokenContractArtifact, Array.from(arguments).slice(1));
   }
 
   /**
    * Creates a tx to deploy a new instance of this contract using the specified public key to derive the address.
    */
-  public static deployWithPublicKey(pxe: PXE, publicKey: PublicKey, admin: AztecAddressLike) {
-    return new DeployMethod<TokenContract>(publicKey, pxe, TokenContractArtifact, Array.from(arguments).slice(2));
+  public static deployWithPublicKey(publicKey: PublicKey, wallet: Wallet, admin: AztecAddressLike) {
+    return new DeployMethod<TokenContract>(publicKey, wallet, TokenContractArtifact, Array.from(arguments).slice(2));
   }
-  
 
-  
+
+
   /**
    * Returns this contract's artifact.
    */
   public static get artifact(): ContractArtifact {
     return TokenContractArtifact;
   }
-  
+
 
   /** Type-safe wrappers for the public methods exposed by the contract. */
   public methods!: {
-    
+
     /** _increase_public_balance(to: struct, amount: field) */
     _increase_public_balance: ((to: AztecAddressLike, amount: FieldLike) => ContractFunctionInteraction) & Pick<ContractMethod, 'selector'>;
 

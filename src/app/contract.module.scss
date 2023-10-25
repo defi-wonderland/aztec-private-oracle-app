@@ -55,10 +55,11 @@
 }
 
 .contractContentContainer {
-  padding-top: 100px;
+  padding-top: 150px;
   display: block;
   height: 100vh;
   padding-bottom: 20px;
+  width: 100%;
 }
 
 .contractContent {
@@ -71,5 +72,5 @@
 .card {
   max-width: 1100px;
   margin-bottom: 20px;
+  min-width: 80%;
 }
-

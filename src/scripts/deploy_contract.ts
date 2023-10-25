@@ -1,6 +1,6 @@
 import { AztecAddress, CompleteAddress, DeployMethod, Fr } from '@aztec/aztec.js';
 import { ContractArtifact } from '@aztec/foundation/abi';
-import { PXE } from '@aztec/types';
+import { PXE, TxReceipt } from '@aztec/types';
 
 export async function deployContract(
   activeWallet: CompleteAddress,
@@ -8,14 +8,14 @@ export async function deployContract(
   typedArgs: Fr[], // encode prior to passing in
   salt: Fr,
   pxe: PXE,
-): Promise<AztecAddress> {
+): Promise<TxReceipt> {
   const tx = new DeployMethod(activeWallet.publicKey, pxe, artifact, typedArgs).send({
     contractAddressSalt: salt,
   });
   await tx.wait();
   const receipt = await tx.getReceipt();
   if (receipt.contractAddress) {
-    return receipt.contractAddress;
+    return receipt;
   } else {
     throw new Error(`Contract not deployed (${receipt.toJSON()})`);
   }

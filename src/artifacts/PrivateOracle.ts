@@ -16,7 +16,6 @@ import {
   EthAddressLike,
   FieldLike,
   Fr,
-  PXE,
   Point,
   PublicKey,
   Wallet,
@@ -56,15 +55,15 @@ export class PrivateOracleContract extends ContractBase {
   /**
    * Creates a tx to deploy a new instance of this contract.
    */
-  public static deploy(pxe: PXE, ) {
-    return new DeployMethod<PrivateOracleContract>(Point.ZERO, pxe, PrivateOracleContractArtifact, Array.from(arguments).slice(1));
+  public static deploy(wallet: Wallet, payment_token: AztecAddressLike, fee: FieldLike) {
+    return new DeployMethod<PrivateOracleContract>(Point.ZERO, wallet, PrivateOracleContractArtifact, Array.from(arguments).slice(1));
   }
 
   /**
    * Creates a tx to deploy a new instance of this contract using the specified public key to derive the address.
    */
-  public static deployWithPublicKey(pxe: PXE, publicKey: PublicKey, ) {
-    return new DeployMethod<PrivateOracleContract>(publicKey, pxe, PrivateOracleContractArtifact, Array.from(arguments).slice(2));
+  public static deployWithPublicKey(publicKey: PublicKey, wallet: Wallet, payment_token: AztecAddressLike, fee: FieldLike) {
+    return new DeployMethod<PrivateOracleContract>(publicKey, wallet, PrivateOracleContractArtifact, Array.from(arguments).slice(2));
   }
   
 
@@ -95,7 +94,7 @@ export class PrivateOracleContract extends ContractBase {
     /** submit_answer(question: field, requester: struct, answer: field) */
     submit_answer: ((question: FieldLike, requester: AztecAddressLike, answer: FieldLike) => ContractFunctionInteraction) & Pick<ContractMethod, 'selector'>;
 
-    /** submit_question(question: field, divinity_address: struct) */
-    submit_question: ((question: FieldLike, divinity_address: AztecAddressLike) => ContractFunctionInteraction) & Pick<ContractMethod, 'selector'>;
+    /** submit_question(question: field, divinity_address: struct, nonce: field) */
+    submit_question: ((question: FieldLike, divinity_address: AztecAddressLike, nonce: FieldLike) => ContractFunctionInteraction) & Pick<ContractMethod, 'selector'>;
   };
 }
