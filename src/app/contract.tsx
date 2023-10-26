@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Oracle } from './Oracle.js';
 import { Popup } from './components/index.js';
 import styles from './contract.module.scss';
+import { MadeByWonderland } from './components/Wonderland.js';
 
 interface Props {
   wallet: CompleteAddress;
@@ -44,6 +45,7 @@ export function Contract({ wallet }: Props) {
             infrastructure should be used in accordance with applicable laws and regulations.
           </Popup>
         )}
+        <MadeByWonderland />
       </div>
     </div>
   );

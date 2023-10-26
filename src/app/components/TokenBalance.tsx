@@ -16,19 +16,20 @@ export function TokenBalance({ token, wallet, onResult }: Props) {
     const wait = 1000; // 1 second
     const amount = 1000;
 
-    const [balance, setBalance] = useState<string | undefined>();
+    const [privateBalance, setPrivateBalance] = useState<string | undefined>();
+    const [publicBalance, setPublicBalance] = useState<string | undefined>();
     const [isLoading, setIsLoading] = useState(false);
 
     const update = async () => {
         const privateBalance: bigint = await token.methods.balance_of_private(wallet.getAddress()).view();
         const publicBalance: bigint = await token.methods.balance_of_public(wallet.getAddress()).view();
-
-        const totalBalance = privateBalance + publicBalance;
-        setBalance(totalBalance.toString());
+        setPrivateBalance(privateBalance.toString());
+        setPublicBalance(publicBalance.toString());
     }
 
     useEffect(() => {
-        setBalance(undefined);
+        setPrivateBalance(undefined);
+        setPublicBalance(undefined);
         update();
         const interval = setInterval(() => update(), wait)
         return () => {
@@ -81,7 +82,13 @@ export function TokenBalance({ token, wallet, onResult }: Props) {
                     }
                 </div>
                 <span className={styles.balanceDisplay}>
-                    Balance: {balance ? balance : '-'}
+                    Private balance: {privateBalance ? privateBalance : '-'}
+                </span>
+            </div>
+            <div className={styles.tokenBalance}>
+
+                <span className={styles.balanceDisplay}>
+                    Public balance: {publicBalance ? publicBalance : '-'}
                 </span>
             </div>
         </div>

@@ -88,6 +88,9 @@ export function CreateQuestion({ user, oracle, fee, token, onBack, onError }: Pr
                     </div>
                 </div>
                 <div className={styles.deployContainer}>
+                    <div className={styles.warningContainer}>
+                        <div className={styles.warning}>⚠️ Creating a question has a fee of {fee} <span className={styles.bold}>private</span> tokens ⚠️</div>
+                    </div>
                     {isLoading ? <Loader /> : <Button onClick={() => createQuestion(question, divinity)} className={styles.actionButton} text={'Create Question'} />}
                 </div>
             </div>

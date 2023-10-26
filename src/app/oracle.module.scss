@@ -195,3 +195,20 @@
 .cancelLoader {
   height: 20px;
 }
+
+.warning {
+  width: 60%;
+  opacity: 0.75;
+  font-size: 14px;
+  padding: 10px;
+}
+
+.warningContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.bold {
+  font-weight: 500;
+}
