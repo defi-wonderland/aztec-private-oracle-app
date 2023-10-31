@@ -1,5 +1,5 @@
 import { Button, Loader } from '@aztec/aztec-ui';
-import { AztecAddress, CompleteAddress, Fr, NotePreimage } from '@aztec/aztec.js';
+import { AztecAddress, CompleteAddress, ContractFunctionInteraction, Fr } from '@aztec/aztec.js';
 import { ContractArtifact, FunctionArtifact } from '@aztec/foundation/abi';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -226,16 +226,14 @@ export function ContractFunctionForm({
 }
 
 interface ContractStorageFormProps {
-  wallet: CompleteAddress;
-  contractAddress?: AztecAddress;
-  storageSlot: number;
-  parseResult: (result: NotePreimage[]) => any[];
+  user: CompleteAddress;
+  func: ContractFunctionInteraction;
+  parseResult: (result: any[]) => any[];
 }
 
 export function useReadContractStorage({
-  wallet,
-  contractAddress,
-  storageSlot,
+  user,
+  func,
   parseResult
 }: ContractStorageFormProps) {
   const wait = 1000; // 1 second
@@ -243,13 +241,9 @@ export function useReadContractStorage({
   const [data, setData] = useState([{}]);
 
   const update = async () => {
-    const STORAGE_SLOT: Fr = new Fr(storageSlot);
-    const result = await pxe.getPrivateStorageAt(
-      wallet.address,
-      contractAddress!,
-      STORAGE_SLOT
-    );
-    setData(parseResult(result));
+    const result = await func.view();
+    console.log(result)
+    setData(parseResult(result.filter((elem: any) => elem._is_some).map((elem: any) => elem._value)));
   }
 
   useEffect(() => {
@@ -259,7 +253,7 @@ export function useReadContractStorage({
     return () => {
       clearInterval(interval);
     }
-  }, [wallet.address.toString()])
+  }, [user.address])
 
   return data;
 }

@@ -21,7 +21,7 @@ export function DeployOracle({ wallet, onDeploy, onError }: Props) {
         try {
             // Deploy token
             const token = await TokenContract.deploy(wallet, wallet.getCompleteAddress()).send().wait();
-
+            console.log('TOKEN DEPLOYED!');
             // Deploy oracle
             const oracle = await PrivateOracleContract.deploy(wallet, token.contractAddress!, new Fr(fee)).send().wait();
 

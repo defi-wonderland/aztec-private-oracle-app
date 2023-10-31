@@ -1,5 +1,5 @@
 import { Button, ButtonSize, Loader } from "@aztec/aztec-ui";
-import { CompleteAddress, NotePreimage } from "@aztec/aztec.js";
+import { AccountWallet, AztecAddress, CompleteAddress } from "@aztec/aztec.js";
 import { useState } from "react";
 import { PrivateOracleContract } from "../../artifacts/PrivateOracle.js";
 import { decodeFromBigInt, toShortAddress } from "../../scripts/util.js";
@@ -8,7 +8,7 @@ import { useReadContractStorage } from "./contract_function_form.js";
 
 interface Props {
     oracle: PrivateOracleContract;
-    user: CompleteAddress;
+    wallet: AccountWallet;
     onQuestionSelected: (question: QuestionElement) => void;
 }
 
@@ -22,7 +22,7 @@ export type QuestionElement = {
 const QUESTION_STORAGE_SLOT = 3;
 const ANSWER_STORAGE_SLOT = 4;
 
-export function Questions({ oracle, user, onQuestionSelected }: Props) {
+export function Questions({ oracle, wallet, onQuestionSelected }: Props) {
     const [loading, setLoading] = useState(-1n);
 
     const cancelQuestion = async (request: bigint) => {
@@ -34,33 +34,36 @@ export function Questions({ oracle, user, onQuestionSelected }: Props) {
         }
     }
 
+    const toAddressString = (addy: any) => {
+        return AztecAddress.fromBigInt(addy).toString()
+    }
+
     const questions = useReadContractStorage({
-        wallet: user,
-        contractAddress: oracle.address,
-        storageSlot: QUESTION_STORAGE_SLOT,
-        parseResult: (result: NotePreimage[]) => (
+        user: wallet.getCompleteAddress(),
+        func: oracle.withWallet(wallet).methods.get_questions(),
+        parseResult: (result: any[]) => (
             result.map(question => (
                 {
-                    request: question.items[0].toBigInt(), // Question
-                    requester: question.items[1].toString(), // Requester
-                    divinity: question.items[2].toString(), // Divinity
+                    request: question.request, // Question
+                    requester: toAddressString(question.requester_address.address), // Requester
+                    divinity: toAddressString(question.divinity_address.address), // Divinity
                 })
             )
         )
     });
 
+
     const answers = useReadContractStorage({
-        wallet: user,
-        contractAddress: oracle.address,
-        storageSlot: ANSWER_STORAGE_SLOT,
-        parseResult: (result: NotePreimage[]) => (
+        user: wallet.getCompleteAddress(),
+        func: oracle.withWallet(wallet).methods.get_answers(),
+        parseResult: (result: any[]) => (
             result.map(answer => (
                 {
-                    request: answer.items[0].toBigInt(), // Question
-                    answer: answer.items[1].toBigInt(), // Answer
-                    requester: answer.items[2].toString(), // Requester
-                    divinity: answer.items[3].toString(), // Divinity
-                    owner: answer.items[4].toString(), // Owner
+                    request: answer.request, // Question
+                    answer: answer.answer, // Answer
+                    requester: toAddressString(answer.requester.address), // Requester
+                    divinity: toAddressString(answer.divinity.address), // Divinity
+                    owner: toAddressString(answer.owner.address), // Owner
                 }
             ))
         )
@@ -79,7 +82,7 @@ export function Questions({ oracle, user, onQuestionSelected }: Props) {
 
     const status = (elem: QuestionElement) => {
         if (!elem.answer) {
-            if (elem.requester === user.address.toString())
+            if (elem.requester === wallet.getAddress().toString())
                 return (loading === elem.request) ?
                     <Loader className={styles.cancelLoader}/> :
                     <Button size={ButtonSize.Small} className={styles.badgeCancel} text={'Cancel'} onClick={() => cancelQuestion(elem.request)} />
