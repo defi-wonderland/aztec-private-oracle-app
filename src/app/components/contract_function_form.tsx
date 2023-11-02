@@ -242,7 +242,6 @@ export function useReadContractStorage({
 
   const update = async () => {
     const result = await func.view();
-    console.log(result)
     setData(parseResult(result.filter((elem: any) => elem._is_some).map((elem: any) => elem._value)));
   }
 

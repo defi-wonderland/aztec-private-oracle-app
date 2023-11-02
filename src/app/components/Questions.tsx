@@ -40,7 +40,7 @@ export function Questions({ oracle, wallet, onQuestionSelected }: Props) {
 
     const questions = useReadContractStorage({
         user: wallet.getCompleteAddress(),
-        func: oracle.withWallet(wallet).methods.get_questions(),
+        func: oracle.withWallet(wallet).methods.get_questions(wallet.getCompleteAddress()),
         parseResult: (result: any[]) => (
             result.map(question => (
                 {
@@ -52,10 +52,23 @@ export function Questions({ oracle, wallet, onQuestionSelected }: Props) {
         )
     });
 
+    const pendingQuestions = useReadContractStorage({
+        user: wallet.getCompleteAddress(),
+        func: oracle.withWallet(wallet).methods.get_pending_questions(wallet.getCompleteAddress()),
+        parseResult: (result: any[]) => (
+            result.map(question => (
+                {
+                    request: question.request, // Question
+                    requester: toAddressString(question.requester_address.address), // Requester
+                    divinity: toAddressString(question.divinity_address.address), // Divinity
+                })
+            )
+        )
+    });
 
     const answers = useReadContractStorage({
         user: wallet.getCompleteAddress(),
-        func: oracle.withWallet(wallet).methods.get_answers(),
+        func: oracle.withWallet(wallet).methods.get_answers(wallet.getCompleteAddress()),
         parseResult: (result: any[]) => (
             result.map(answer => (
                 {
@@ -71,7 +84,7 @@ export function Questions({ oracle, wallet, onQuestionSelected }: Props) {
 
     const header = ['request', 'requester', 'divinity', 'answer', ''];
 
-    const data: QuestionElement[] = questions.concat(answers).map((elem: any) => (
+    const data: QuestionElement[] = questions.concat(answers).concat(pendingQuestions).map((elem: any) => (
         {
             request: elem.request,
             requester: elem.requester,

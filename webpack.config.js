@@ -4,8 +4,22 @@ import { dirname, resolve } from 'path';
 import ResolveTypeScriptPlugin from 'resolve-typescript-plugin';
 import { fileURLToPath } from 'url';
 import webpack from 'webpack';
+import dotenv from 'dotenv';
 
 const require = createRequire(import.meta.url);
+
+const getEnvs = () => {
+    // call dotenv and it will return an Object with a parsed key 
+    const env = dotenv.config().parsed;
+
+    // reduce it to a nice object, the same as before
+    const envKeys = Object.keys(env).reduce((prev, next) => {
+      prev[`${next}`] = JSON.stringify(env[next]);
+      return prev;
+    }, {});
+
+    return envKeys;
+}
 
 export default (_, argv) => ({
   target: 'web',
@@ -65,6 +79,7 @@ export default (_, argv) => ({
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: JSON.stringify(argv.mode || 'production'),
+        ...getEnvs(),
       },
     }),
     new webpack.ProvidePlugin({ Buffer: ['buffer', 'Buffer'] }),

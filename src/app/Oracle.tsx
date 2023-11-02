@@ -24,17 +24,17 @@ interface Props {
     setResult: (result: string) => void;
 }
 
-let ORACLE: AztecAddress;
-let TOKEN: AztecAddress;
-let FEE: number;
-let TX_HASH: TxHash;
-
-ORACLE = AztecAddress.fromString('0x0725ea8d8ce1a178af1553b9f58f9d17f57b3f5edbdc996c2baaa2371ab04c2f');
-TOKEN = AztecAddress.fromString('0x1787eefa64d771061fce58673f7e67b6d9f1e21f132eb77b4380f9514ca2c1b6');
-FEE = 1000;
-TX_HASH = TxHash.fromString('24216e01a24a9f470c6d23f979862f592994f91dee9b1303c05ee58ecb51fe67');
+let ORACLE: AztecAddress | undefined;
+let TOKEN: AztecAddress | undefined;
+let FEE: number | undefined;
+let TX_HASH: TxHash | undefined;
 
 export function Oracle({ user, setError, setResult }: Props) {
+    ORACLE = process.env.ORACLE ? AztecAddress.fromString(process.env.ORACLE) : undefined;
+    TOKEN = process.env.TOKEN ? AztecAddress.fromString(process.env.TOKEN) : undefined;
+    FEE = process.env.FEE ? parseInt(process.env.FEE) : undefined;
+    TX_HASH = process.env.TX_HASH ? TxHash.fromString(process.env.TX_HASH) : undefined;
+
     const [oracleAddress, setOracleAddress] = useState<AztecAddress | undefined>(ORACLE);
     const [tokenAddress, setTokenAddress] = useState<AztecAddress | undefined>(TOKEN);
     const [fee, setFee] = useState<number | undefined>(FEE);
