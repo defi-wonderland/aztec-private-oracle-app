@@ -1,5 +1,5 @@
 import { Button, ButtonSize, ButtonTheme, Card, CardTheme } from '@aztec/aztec-ui';
-import { AccountWallet, AztecAddress, CompleteAddress, Fr, NotePreimage, TxHash } from '@aztec/aztec.js';
+import { AccountWallet, AztecAddress, CompleteAddress, ExtendedNote, Fr, Note, TxHash } from '@aztec/aztec.js';
 import { useEffect, useState } from 'react';
 import { PrivateOracleContract } from '../artifacts/PrivateOracle.js';
 import { TokenContract } from '../artifacts/Token.js';
@@ -24,17 +24,17 @@ interface Props {
     setResult: (result: string) => void;
 }
 
-let ORACLE: AztecAddress;
-let TOKEN: AztecAddress;
-let FEE: number;
-let TX_HASH: TxHash;
-
-// ORACLE = AztecAddress.fromString('0x255083cdf6e6ddc45f36e8322e38067ab349f3176cd99092e08bb2a3e27952c1');
-// TOKEN = AztecAddress.fromString('0x2225d50c324c99d2eb7287e9f15a4d29f79cc32dc6b81f50b4a4d8968055827f');
-// FEE = 1000;
-// TX_HASH = TxHash.fromString('09defed9e2f02ea2bffdcc6093a909a4b070d4563ba491b1014e69fe15601be7');
+let ORACLE: AztecAddress | undefined;
+let TOKEN: AztecAddress | undefined;
+let FEE: number | undefined;
+let TX_HASH: TxHash | undefined;
 
 export function Oracle({ user, setError, setResult }: Props) {
+    ORACLE = process.env.ORACLE ? AztecAddress.fromString(process.env.ORACLE) : undefined;
+    TOKEN = process.env.TOKEN ? AztecAddress.fromString(process.env.TOKEN) : undefined;
+    FEE = process.env.FEE ? parseInt(process.env.FEE) : undefined;
+    TX_HASH = process.env.TX_HASH ? TxHash.fromString(process.env.TX_HASH) : undefined;
+
     const [oracleAddress, setOracleAddress] = useState<AztecAddress | undefined>(ORACLE);
     const [tokenAddress, setTokenAddress] = useState<AztecAddress | undefined>(TOKEN);
     const [fee, setFee] = useState<number | undefined>(FEE);
@@ -100,25 +100,18 @@ export function Oracle({ user, setError, setResult }: Props) {
         if (isDeployed) {
             addRequiredNotesToPXE(oracleAddress, user, txHash, tokenAddress, fee);
         }
-    });
+    }, [isDeployed]);
 
     const addRequiredNotesToPXE = async (oracle: AztecAddress, user: CompleteAddress, txHash: TxHash, token: AztecAddress, fee: number) => {
         // Add note for the payment token
+        
         await pxe.addNote(
-            user.address,
-            oracle,
-            new Fr(1),
-            new NotePreimage([token.toField()]),
-            txHash
+            new ExtendedNote(new Note([token.toField()]), user.address, oracle, new Fr(1), txHash)
         );
 
         // Add note for the fee
         await pxe.addNote(
-            user.address,
-            oracle,
-            new Fr(2),
-            new NotePreimage([new Fr(fee)]),
-            txHash
+            new ExtendedNote(new Note([new Fr(fee)]), user.address, oracle, new Fr(2), txHash)
         );
     };
 
@@ -133,12 +126,12 @@ export function Oracle({ user, setError, setResult }: Props) {
         </div>;
 
     const { header, content } = function () {
-        if (isDeployed && isContractsInited) {
+        if (isDeployed && isContractsInited && wallet) {
             switch (status) {
                 case Status.Questions:
                     return {
                         header: questionsHeader,
-                        content: <Questions user={user} oracle={oracleContract} onQuestionSelected={onQuestionSelected}/>
+                        content: <Questions wallet={wallet} oracle={oracleContract} onQuestionSelected={onQuestionSelected}/>
                     };
                 case Status.NewQuestion:
                     return {

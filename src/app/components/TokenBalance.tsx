@@ -3,7 +3,7 @@ import { TokenContract } from "../../artifacts/Token.js";
 import { AztecAddress, CompleteAddress, Fr } from "@aztec/circuits.js";
 import styles from './TokenBalance.module.scss';
 import { Button, ButtonSize, ButtonTheme, Loader } from "@aztec/aztec-ui";
-import { NotePreimage, TxHash } from "@aztec/types";
+import { ExtendedNote, Note, TxHash } from "@aztec/types";
 import { AccountWallet, computeMessageSecretHash } from "@aztec/aztec.js";
 
 interface Props {
@@ -39,8 +39,8 @@ export function TokenBalance({ token, wallet, onResult }: Props) {
 
     const addPendingShieldNoteToPXE = async (amount: bigint, secretHash: Fr, txHash: TxHash) => {
         const storageSlot = new Fr(5); // The storage slot of `pending_shields` is 5.
-        const preimage = new NotePreimage([new Fr(amount), secretHash]);
-        await wallet.addNote(wallet.getAddress(), token.address, storageSlot, preimage, txHash);
+        const preimage = new Note([new Fr(amount), secretHash]);
+        await wallet.addNote(new ExtendedNote(preimage, wallet.getAddress(), token.address, storageSlot, txHash));
     };
 
     const mintTokens = async () => {
