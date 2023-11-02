@@ -1,50 +1,82 @@
-import { Card, CardTheme } from "@aztec/aztec-ui";
-import { AztecAddress, CompleteAddress, NotePreimage } from "@aztec/aztec.js";
-import styles from './TokenMinter.module.scss';
+import { Button, ButtonSize, Loader } from "@aztec/aztec-ui";
+import { AccountWallet, AztecAddress, CompleteAddress } from "@aztec/aztec.js";
+import { useState } from "react";
+import { PrivateOracleContract } from "../../artifacts/PrivateOracle.js";
+import { decodeFromBigInt, toShortAddress } from "../../scripts/util.js";
+import styles from '../oracle.module.scss';
 import { useReadContractStorage } from "./contract_function_form.js";
-import { toShortAddress } from "../../scripts/util.js";
 
 interface Props {
-    contractAddress: AztecAddress;
-    user: CompleteAddress;
+    oracle: PrivateOracleContract;
+    wallet: AccountWallet;
+    onQuestionSelected: (question: QuestionElement) => void;
 }
 
-type Element = {
-    request: string;
+export type QuestionElement = {
+    request: bigint;
     requester: string;
     divinity: string;
-    answer: string;
+    answer: bigint | undefined;
 }
 
-export function Questions({ contractAddress, user }: Props) {
+const QUESTION_STORAGE_SLOT = 3;
+const ANSWER_STORAGE_SLOT = 4;
+
+export function Questions({ oracle, wallet, onQuestionSelected }: Props) {
+    const [loading, setLoading] = useState(-1n);
+
+    const cancelQuestion = async (request: bigint) => {
+        setLoading(request);
+        try {
+            await oracle.methods.cancel_question(request).send().wait();
+        } finally {
+            setLoading(-1n);
+        }
+    }
+
+    const toAddressString = (addy: any) => {
+        return AztecAddress.fromBigInt(addy).toString()
+    }
 
     const questions = useReadContractStorage({
-        wallet: user,
-        contractAddress,
-        storageSlot: 1,
-        parseResult: (result: NotePreimage[]) => (
+        user: wallet.getCompleteAddress(),
+        func: oracle.withWallet(wallet).methods.get_questions(wallet.getCompleteAddress()),
+        parseResult: (result: any[]) => (
             result.map(question => (
                 {
-                    request: question.items[0].toBigInt().toString(), // Question
-                    requester: question.items[1].toString(), // Requester
-                    divinity: question.items[2].toString(), // Divinity
+                    request: question.request, // Question
+                    requester: toAddressString(question.requester_address.address), // Requester
+                    divinity: toAddressString(question.divinity_address.address), // Divinity
+                })
+            )
+        )
+    });
+
+    const pendingQuestions = useReadContractStorage({
+        user: wallet.getCompleteAddress(),
+        func: oracle.withWallet(wallet).methods.get_pending_questions(wallet.getCompleteAddress()),
+        parseResult: (result: any[]) => (
+            result.map(question => (
+                {
+                    request: question.request, // Question
+                    requester: toAddressString(question.requester_address.address), // Requester
+                    divinity: toAddressString(question.divinity_address.address), // Divinity
                 })
             )
         )
     });
 
     const answers = useReadContractStorage({
-        wallet: user,
-        contractAddress,
-        storageSlot: 2,
-        parseResult: (result: NotePreimage[]) => (
+        user: wallet.getCompleteAddress(),
+        func: oracle.withWallet(wallet).methods.get_answers(wallet.getCompleteAddress()),
+        parseResult: (result: any[]) => (
             result.map(answer => (
                 {
-                    request: answer.items[0].toBigInt().toString(), // Question
-                    answer: answer.items[1].toBigInt().toString(), // Answer
-                    requester: answer.items[2].toString(), // Requester
-                    divinity: answer.items[3].toString(), // Divinity
-                    owner: answer.items[4].toString(), // Owner
+                    request: answer.request, // Question
+                    answer: answer.answer, // Answer
+                    requester: toAddressString(answer.requester.address), // Requester
+                    divinity: toAddressString(answer.divinity.address), // Divinity
+                    owner: toAddressString(answer.owner.address), // Owner
                 }
             ))
         )
@@ -52,27 +84,29 @@ export function Questions({ contractAddress, user }: Props) {
 
     const header = ['request', 'requester', 'divinity', 'answer', ''];
 
-    const data: Element[] = questions.concat(answers).map((elem: any) => (
+    const data: QuestionElement[] = questions.concat(answers).concat(pendingQuestions).map((elem: any) => (
         {
             request: elem.request,
-            requester: elem.requester || '-',
-            divinity: elem.divinity || '-',
-            answer: elem.answer || '-',
+            requester: elem.requester,
+            divinity: elem.divinity,
+            answer: elem.answer,
         }
     ));
 
-    const status = (elem: Element) => {
-        if (elem.answer === '-') {
-            if (elem.requester === user.address.toString())
-                return <span className={styles.badgeToBeAnswered}>To be answered</span>
+    const status = (elem: QuestionElement) => {
+        if (!elem.answer) {
+            if (elem.requester === wallet.getAddress().toString())
+                return (loading === elem.request) ?
+                    <Loader className={styles.cancelLoader}/> :
+                    <Button size={ButtonSize.Small} className={styles.badgeCancel} text={'Cancel'} onClick={() => cancelQuestion(elem.request)} />
             else
-                return <span className={styles.badgeToAnswer}>To answer</span>
+                return <Button size={ButtonSize.Small} className={styles.badgeToAnswer} text={'Answer'} onClick={() => onQuestionSelected(elem)} />
         } else {
-            return <span className={styles.badgeAnswered}>Answered</span>
+            return <></>
         }
     }
 
-    const content =
+    return (
         <div className={styles.container}>
             <table>
                 <thead>
@@ -80,22 +114,21 @@ export function Questions({ contractAddress, user }: Props) {
                         {header.map((h, index) => <th key={index}>{h}</th>)}
                     </tr>
                 </thead>
+
                 <tbody>
-                    {data.map((elem, index) => (
-                        <tr key={index}>
-                            <td>{elem.request}</td>
-                            <td>{toShortAddress(elem.requester)}</td>
-                            <td>{toShortAddress(elem.divinity)}</td>
-                            <td>{elem.answer}</td>
-                            <td>{status(elem)}</td>
-                        </tr>
-                    ))}
+                    {
+                        data.map((elem, index) => (
+                            <tr key={index}>
+                                <td>{elem.request ? decodeFromBigInt(elem.request) : '-'}</td>
+                                <td>{toShortAddress(elem.requester || '-')}</td>
+                                <td>{toShortAddress(elem.divinity || '-')}</td>
+                                <td>{elem.answer ? decodeFromBigInt(elem.answer) : '-'}</td>
+                                <td className={styles.questionStatus}>{status(elem)}</td>
+                            </tr>
+                        ))
+                    }
                 </tbody>
             </table>
         </div>
-
-
-    return (
-        <Card className={styles.card} cardTheme={CardTheme.DARK} cardHeader={'Questions'} cardContent={content} />
     )
 }

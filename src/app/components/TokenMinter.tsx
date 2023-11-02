@@ -1,5 +1,5 @@
 import { Button, Card, CardTheme, Loader } from "@aztec/aztec-ui";
-import { AztecAddress, CompleteAddress, Fr, NotePreimage, TxHash, computeMessageSecretHash } from "@aztec/aztec.js";
+import { AztecAddress, CompleteAddress, ExtendedNote, Fr, Note, TxHash, computeMessageSecretHash } from "@aztec/aztec.js";
 import { useState } from "react";
 import { pxe, tokenArtifact } from '../../config.js';
 import { callContractFunction } from "../../scripts/call_contract_function.js";
@@ -19,9 +19,8 @@ export function TokenMinter({ token, minter, onResult }: Props) {
 
     const addPendingShieldNoteToPXE = async (account: CompleteAddress, amount: bigint, secretHash: Fr, txHash: TxHash) => {
         const storageSlot = new Fr(5); // The storage slot of `pending_shields` is 5.
-        const preimage = new NotePreimage([new Fr(amount), secretHash]);
-        const selectedWallet = await getWallet(account, pxe);
-        await selectedWallet.addNote(selectedWallet.getAddress(), token, storageSlot, preimage, txHash);
+        const preimage = new Note([new Fr(amount), secretHash]);
+        await pxe.addNote(new ExtendedNote(preimage, account.address, token, storageSlot, txHash));
     };
 
     const mintTokens = async () => {

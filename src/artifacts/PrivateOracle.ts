@@ -16,7 +16,6 @@ import {
   EthAddressLike,
   FieldLike,
   Fr,
-  PXE,
   Point,
   PublicKey,
   Wallet,
@@ -56,15 +55,15 @@ export class PrivateOracleContract extends ContractBase {
   /**
    * Creates a tx to deploy a new instance of this contract.
    */
-  public static deploy(pxe: PXE, ) {
-    return new DeployMethod<PrivateOracleContract>(Point.ZERO, pxe, PrivateOracleContractArtifact, Array.from(arguments).slice(1));
+  public static deploy(wallet: Wallet, payment_token: AztecAddressLike, fee: FieldLike) {
+    return new DeployMethod<PrivateOracleContract>(Point.ZERO, wallet, PrivateOracleContractArtifact, Array.from(arguments).slice(1));
   }
 
   /**
    * Creates a tx to deploy a new instance of this contract using the specified public key to derive the address.
    */
-  public static deployWithPublicKey(pxe: PXE, publicKey: PublicKey, ) {
-    return new DeployMethod<PrivateOracleContract>(publicKey, pxe, PrivateOracleContractArtifact, Array.from(arguments).slice(2));
+  public static deployWithPublicKey(publicKey: PublicKey, wallet: Wallet, payment_token: AztecAddressLike, fee: FieldLike) {
+    return new DeployMethod<PrivateOracleContract>(publicKey, wallet, PrivateOracleContractArtifact, Array.from(arguments).slice(2));
   }
   
 
@@ -92,10 +91,28 @@ export class PrivateOracleContract extends ContractBase {
     /** get_answer_unconstrained(question: field, note_owner: struct) */
     get_answer_unconstrained: ((question: FieldLike, note_owner: AztecAddressLike) => ContractFunctionInteraction) & Pick<ContractMethod, 'selector'>;
 
+    /** get_answers(owner: struct) */
+    get_answers: ((owner: AztecAddressLike) => ContractFunctionInteraction) & Pick<ContractMethod, 'selector'>;
+
+    /** get_fee() */
+    get_fee: (() => ContractFunctionInteraction) & Pick<ContractMethod, 'selector'>;
+
+    /** get_payment_token() */
+    get_payment_token: (() => ContractFunctionInteraction) & Pick<ContractMethod, 'selector'>;
+
+    /** get_pending_questions(divinity: struct) */
+    get_pending_questions: ((divinity: AztecAddressLike) => ContractFunctionInteraction) & Pick<ContractMethod, 'selector'>;
+
+    /** get_questions(requester: struct) */
+    get_questions: ((requester: AztecAddressLike) => ContractFunctionInteraction) & Pick<ContractMethod, 'selector'>;
+
+    /** initialize_payment_token(payment_token: field, fee: field) */
+    initialize_payment_token: ((payment_token: FieldLike, fee: FieldLike) => ContractFunctionInteraction) & Pick<ContractMethod, 'selector'>;
+
     /** submit_answer(question: field, requester: struct, answer: field) */
     submit_answer: ((question: FieldLike, requester: AztecAddressLike, answer: FieldLike) => ContractFunctionInteraction) & Pick<ContractMethod, 'selector'>;
 
-    /** submit_question(question: field, divinity_address: struct) */
-    submit_question: ((question: FieldLike, divinity_address: AztecAddressLike) => ContractFunctionInteraction) & Pick<ContractMethod, 'selector'>;
+    /** submit_question(question: field, divinity_address: struct, nonce: field) */
+    submit_question: ((question: FieldLike, divinity_address: AztecAddressLike, nonce: FieldLike) => ContractFunctionInteraction) & Pick<ContractMethod, 'selector'>;
   };
 }

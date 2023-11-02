@@ -37,26 +37,26 @@
     style-loader "^3.3.1"
     wagmi "^0.11.2"
 
-"@aztec/aztec.js@0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@aztec/aztec.js/-/aztec.js-0.9.0.tgz#153066e036d71f25d538ddcb1edecf1f58e3f026"
-  integrity sha512-QGKCBTex3faXWrlM05rRYBlW7BeaI0FSWaFbmHe3To+0EvpOk8ED6alLb6pZE1IQ9OI5QzRhKG4uM5AW3Piajg==
+"@aztec/aztec.js@0.13.1":
+  version "0.13.1"
+  resolved "https://registry.yarnpkg.com/@aztec/aztec.js/-/aztec.js-0.13.1.tgz#37fb7c6e2cc14d9e3af6f94009c75be54219e422"
+  integrity sha512-+OxcoyonNfRBhAaQ9W1CuUAGEcekttT5A3eBWH6gpwXmbXf8ntEsUffzJ+GpyKgRZAdLYVIJSizQRlhGJLKZ+w==
   dependencies:
-    "@aztec/circuits.js" "0.9.0"
-    "@aztec/ethereum" "0.9.0"
-    "@aztec/foundation" "0.9.0"
-    "@aztec/types" "0.9.0"
+    "@aztec/circuits.js" "0.13.1"
+    "@aztec/ethereum" "0.13.1"
+    "@aztec/foundation" "0.13.1"
+    "@aztec/types" "0.13.1"
     lodash.every "^4.6.0"
     lodash.partition "^4.6.0"
     lodash.zip "^4.2.0"
     tslib "^2.4.0"
 
-"@aztec/circuits.js@0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@aztec/circuits.js/-/circuits.js-0.9.0.tgz#7c746d8241257bca8456f78b47c0930f2193fde5"
-  integrity sha512-qDRdWGalbFjBdVu1vtr37J7ToSMJbK6MNlMDVybb8Zot3KSsUne53SXsVFR2XFfFrGPXVtsVMvrjsklSOfhl0w==
+"@aztec/circuits.js@0.13.1":
+  version "0.13.1"
+  resolved "https://registry.yarnpkg.com/@aztec/circuits.js/-/circuits.js-0.13.1.tgz#5c1537485969409b49e312a4e0c2a872533999f4"
+  integrity sha512-3Epj1ugj2c5igV/FZ/e136je4pDww+CwihQroYDfAZjSrKIaCmvacU6O6PuflmIeXL6ukxnXMw2RK+cTdjm/+Q==
   dependencies:
-    "@aztec/foundation" "0.9.0"
+    "@aztec/foundation" "0.13.1"
     "@msgpack/msgpack" "^3.0.0-beta2"
     "@noble/curves" "^1.0.0"
     "@types/lodash.camelcase" "^4.3.7"
@@ -71,22 +71,23 @@
     lodash.times "^4.3.2"
     tslib "^2.4.0"
 
-"@aztec/ethereum@0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@aztec/ethereum/-/ethereum-0.9.0.tgz#598825016b426e825b01eb47aa0a057d2546ef36"
-  integrity sha512-hK+kSN1yZ5E+ov2QE1s7EoTHOl/1MAYdmQvcUc0oSZqNXB68oICaTMsRo0Lxtv1Bf9N22R0fGc+ifG2iHoGYvg==
+"@aztec/ethereum@0.13.1":
+  version "0.13.1"
+  resolved "https://registry.yarnpkg.com/@aztec/ethereum/-/ethereum-0.13.1.tgz#500e1cc17aaeb7e3d650d5873e286dc9a57a7297"
+  integrity sha512-6tsfNV8QcjcQwb7sQ8ROzeQrFdp/dInRayz8UUVTKm3zK79xUanXuTX6r0fpKoGGpNjOCqBu+CyaR5KzH0ZPfA==
   dependencies:
-    "@aztec/foundation" "0.9.0"
+    "@aztec/foundation" "0.13.1"
     dotenv "^16.0.3"
     tslib "^2.4.0"
     viem "^1.2.5"
 
-"@aztec/foundation@0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@aztec/foundation/-/foundation-0.9.0.tgz#7d223fd445d067d8072eb444dcd19b698e0de22d"
-  integrity sha512-hAknShYGINIakh1+lv625WHj5u8WStaKKjcr2a/3mgJeYntcN5Jg1kMQ1qyXA5jgpXCDsP/E6t+xTPGNk3eBWg==
+"@aztec/foundation@0.13.1":
+  version "0.13.1"
+  resolved "https://registry.yarnpkg.com/@aztec/foundation/-/foundation-0.13.1.tgz#73cfe421ecdc21f2b20d99884b9f45b54374d007"
+  integrity sha512-S7qTeVqXjoqX7v4R0prUXIe2rbDmDG8c8gyDgCW+vHFyeqHvX3ddFeaui5yQLbEQz9NQGuCWdoiNVfYeR7+TEw==
   dependencies:
     "@koa/cors" "^4.0.0"
+    "@noble/curves" "^1.2.0"
     debug "^4.3.4"
     detect-node "^2.1.0"
     hash.js "^1.1.7"
@@ -101,14 +102,14 @@
     pako "^2.1.0"
     sha3 "^2.1.4"
 
-"@aztec/types@0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@aztec/types/-/types-0.9.0.tgz#34dc4d8b55010774033003067e3f7342520f5c20"
-  integrity sha512-uFGJrTaANT4Xa7NFPoDqs+3bepD2W1MFHFtqMG6a27SmU+A+S5uIhWwmwcSImO6nXUcyiH3n33ouBM46AagFJQ==
+"@aztec/types@0.13.1":
+  version "0.13.1"
+  resolved "https://registry.yarnpkg.com/@aztec/types/-/types-0.13.1.tgz#17b7170893dca0c2cef543e050d68faac3af4a4b"
+  integrity sha512-pO6jF7YNiE4yMx/fElAu0dsF93M6c/16s7FCg4ocKNlFlPk+MSZLuTTp6uYL2dg9F23FXo9pKHU2xPNRExtEmg==
   dependencies:
-    "@aztec/circuits.js" "0.9.0"
-    "@aztec/ethereum" "0.9.0"
-    "@aztec/foundation" "0.9.0"
+    "@aztec/circuits.js" "0.13.1"
+    "@aztec/ethereum" "0.13.1"
+    "@aztec/foundation" "0.13.1"
     browserify-cipher "^1.0.1"
     lodash.clonedeep "^4.5.0"
     lodash.isequal "^4.5.0"

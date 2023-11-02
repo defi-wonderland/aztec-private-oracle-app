@@ -1,0 +1,35 @@
+.tokenBalanceContainer {
+    position: fixed;
+    top: 30px;
+    right: 250px;
+    display: flex;
+    gap: 10px;
+    flex-direction: row;
+    align-items: center;
+}
+
+.mintButton {
+    height: 45px;
+    width: 70px;
+}
+
+.mintButtonContainer {
+    width: 70px;
+}
+
+.tokenBalance {
+    box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    background-color: white;
+    position: relative;
+    font-family: Sohne;
+    font-size: 16px;
+    height: 45px;
+    font-weight: 450;
+    display: flex;
+    align-items: center;
+}
+
+.balanceDisplay {
+    padding: 0 15px;
+}

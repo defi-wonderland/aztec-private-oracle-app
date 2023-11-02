@@ -5,7 +5,7 @@ import { TokenContractArtifact } from './artifacts/Token.js';
 
 // update this if using a different contract
 
-export const contractArtifact: ContractArtifact = PrivateOracleContractArtifact;
+export const oracleArtifact: ContractArtifact = PrivateOracleContractArtifact;
 export const tokenArtifact: ContractArtifact = TokenContractArtifact;
 
 export const PXE_URL: string = process.env.PXE_URL || 'http://localhost:8080';
