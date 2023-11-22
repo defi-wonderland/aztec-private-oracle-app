@@ -16,23 +16,33 @@ interface Props {
     onError: (error: string) => void;
 }
 
+const ADDRESS_ZERO = AztecAddress.fromBigInt(0n);
+
 export function CreateQuestion({ user, oracle, fee, token, onBack, onError }: Props) {
     const [isLoading, setIsLoading] = useState(false);
     const [question, setQuestion] = useState(`What's the ratio for fernet?`);
     const [divinity, setDivinity] = useState('');
 
 
-    const approveUnshield = async (to: AztecAddress, amount: bigint) => {
+    const approveEscrow = async (to: AztecAddress, amount: bigint, participants: AztecAddress[]) => {
         const selectedWallet = await getWallet(user, pxe);
         const tokenContract = await TokenContract.at(token, selectedWallet);
 
         const nonce = Fr.random();
         // We need to compute the message we want to sign and add it to the wallet as approved
-        const action = tokenContract.methods.unshield(user.address, to, BigInt(amount), nonce);
+        const action = tokenContract.methods.escrow(
+            user.address,
+            to,
+            amount,
+            participants,
+            nonce
+        );
+
         const messageHash = await computeAuthWitMessageHash(to, action.request());
 
         const witness = await selectedWallet.createAuthWitness(messageHash);
         await selectedWallet.addAuthWitness(witness);
+        
         return nonce;
     }
 
@@ -43,7 +53,16 @@ export function CreateQuestion({ user, oracle, fee, token, onBack, onError }: Pr
             const oracleContract = await PrivateOracleContract.at(oracle, selectedWallet);
 
             // First approve the amount of tokens
-            const nonce = await approveUnshield(oracle, BigInt(fee));
+            const nonce = await approveEscrow(
+                oracle, 
+                BigInt(fee), 
+                [
+                    user.address,
+                    AztecAddress.fromString(divinity),
+                    ADDRESS_ZERO,
+                    ADDRESS_ZERO,
+                ]
+            );
 
             const hexQuestion = encodeToBigInt(question);
             await oracleContract.methods.submit_question(new Fr(hexQuestion), AztecAddress.fromString(divinity), new Fr(nonce)).send().wait();

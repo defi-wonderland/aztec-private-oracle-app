@@ -67,6 +67,7 @@ export function Oracle({ user, setError, setResult }: Props) {
             if (isDeployed) {
                 const oracleContract = await PrivateOracleContract.at(oracleAddress, selectedWallet);
                 const tokenContract = await TokenContract.at(tokenAddress, selectedWallet);
+                await pxe.registerRecipient(oracleContract.completeAddress);
                 setOracleContract(oracleContract);
                 setTokenContract(tokenContract);
             }

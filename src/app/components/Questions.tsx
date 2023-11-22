@@ -40,7 +40,7 @@ export function Questions({ oracle, wallet, onQuestionSelected }: Props) {
 
     const questions = useReadContractStorage({
         user: wallet.getCompleteAddress(),
-        func: oracle.withWallet(wallet).methods.get_questions(wallet.getCompleteAddress()),
+        func: oracle.withWallet(wallet).methods.get_questions_unconstrained(wallet.getCompleteAddress()),
         parseResult: (result: any[]) => (
             result.map(question => (
                 {
@@ -54,7 +54,7 @@ export function Questions({ oracle, wallet, onQuestionSelected }: Props) {
 
     const pendingQuestions = useReadContractStorage({
         user: wallet.getCompleteAddress(),
-        func: oracle.withWallet(wallet).methods.get_pending_questions(wallet.getCompleteAddress()),
+        func: oracle.withWallet(wallet).methods.get_pending_questions_unconstrained(wallet.getCompleteAddress()),
         parseResult: (result: any[]) => (
             result.map(question => (
                 {
@@ -68,7 +68,7 @@ export function Questions({ oracle, wallet, onQuestionSelected }: Props) {
 
     const answers = useReadContractStorage({
         user: wallet.getCompleteAddress(),
-        func: oracle.withWallet(wallet).methods.get_answers(wallet.getCompleteAddress()),
+        func: oracle.withWallet(wallet).methods.get_answers_unconstrained(wallet.getCompleteAddress()),
         parseResult: (result: any[]) => (
             result.map(answer => (
                 {
